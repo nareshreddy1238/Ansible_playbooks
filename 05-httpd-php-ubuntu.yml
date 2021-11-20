@@ -1,0 +1,61 @@
+---
+- name: update web servers
+  hosts: ubuntu
+  become: yes
+  
+  handlers:
+  - name: Restart Apache
+    service:
+      name: apache2
+      state: restarted
+
+  tasks:
+  - name: ensure apache is installed
+    package:
+      name: apache2
+      state: present
+
+  - name: ensure apache is started
+    service:
+      name: apache2
+      state: started
+
+  - name: ensure apache is enabled
+    service:
+      name: apache2
+      enabled: yes
+
+  - name: ensure git is installed
+    package:
+      name: git
+      state: present
+
+  - name: ensure code is update from git repo
+    git:
+      repo: https://github.com/nareshreddy1238/ecomm.git
+      dest: /var/www/html
+
+  - name: httpd listen on port 8081
+    lineinfile: 
+      path: /etc/apache2/apache2.conf
+      regexp: '^Listen '
+      insertafter: '^#Listen '
+      line: Listen 9090
+    notify:
+    - Restart Apache   
+   
+  - name: ensure php is installed
+    package:
+      name: php
+      state: present
+    notify: 
+    - Restart Apache
+
+  - name: ensure php code update
+    copy:
+      src: date.php
+      dest: /var/www/html/date.php
+    notify:
+    - Restart Apache
+...
+
