@@ -1,0 +1,15 @@
+---
+- name: update web servers on both Ubuntu and Centos
+  hosts: all
+  become: yes
+  vars:
+    username: Naresh
+    location: Bangalore
+    
+  tasks:
+  - name: ensure dynamic values update by using jinja template
+    template: 
+      src: info.j2
+      dest: /var/www/html/info.html
+...
+

@@ -1,0 +1,84 @@
+---
+- name: update web servers on both Ubuntu and Centos
+  hosts: all
+  become: yes
+  
+  handlers:
+  - name: Restart httpd Centos
+    service: name=httpd state=restarted
+  - name: Restart Apache Ubuntu
+    service: name=apache2 state=restarted
+
+  tasks:
+  - name: ensure httpd is installed in Redhat
+    package: name=httpd state=present
+    when: ansible_os_family == "RedHat"
+
+  - name: ensure apache2 is installed in Ubuntu
+    package: name=apache2 state=present
+    when: ansible_os_family == "Debian"
+
+  - name: ensure apache is started in Redhat
+    service: name=httpd state=started
+    when: ansible_os_family == "RedHat"
+
+  - name: ensure apache2 is installed in Ubuntu
+    service: name=apache2 state=started
+    when: ansible_os_family == "Debian"
+
+  - name: ensure apache is enabled
+    service: name=httpd enabled=yes
+    when: ansible_os_family == "RedHat"
+
+  - name: ensure apache is enabled
+    service: name=apache2 enabled=yes
+    when: ansible_os_family == "Debian"
+
+  - name: ensure git is installed
+    package: name=git state=present
+ 
+  - name: ensure code is update from git repo
+    git: repo=https://github.com/nareshreddy1238/ecomm.git dest=/var/www/html
+    
+  - name: Centos httpd listen on port 9090
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf 
+      regexp: '^Listen ' 
+      insertafter: '^#Listen ' 
+      line: Listen 9090
+    when: ansible_os_family == "RedHat"
+    notify:
+    - Restart httpd Centos
+
+  - name: Ubuntu Apache2 listen on port 8081
+    lineinfile: 
+      path: /etc/apache2/apache2.conf 
+      regexp: '^Listen ' 
+      insertafter: '^#Listen ' 
+      line: Listen 8081
+    when: ansible_os_family == "Debian"
+    notify:
+    - Restart Apache Ubuntu
+ 
+  - name: ensure selinux is permissive
+    selinux: policy=targeted state=permissive
+    when: ansible_os_family == "RedHat"
+  
+  - name: ensure php is installed
+    package: name=php state=present
+    notify:
+    - Restart Apache Ubuntu
+    - Restart httpd Centos
+    
+  - name: ensure php code update
+    copy: src=date.php dest=/var/www/html/date.php
+    notify:
+    - Restart Apache Ubuntu
+    - Restart httpd Centos
+
+  - name: ensure info code update
+    template: 
+      src: info.j2
+      dest: /var/www/html/info.html
+...
+
