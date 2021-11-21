@@ -1,0 +1,7 @@
+---
+  - name: ensure apache is installed
+    package:
+      name: httpd
+      state: present
+
+...

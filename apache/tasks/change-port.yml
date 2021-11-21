@@ -1,0 +1,13 @@
+---
+  - name: httpd listen on port 9090
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^Listen '
+      insertafter: '^#Listen '
+      line: Listen 9090
+
+  - name: ensure selinux is permissive
+    selinux:
+      policy: targeted
+      state: permissive
+...

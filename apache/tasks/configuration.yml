@@ -1,0 +1,11 @@
+---
+  - name: ensure apache is started
+    service:
+      name: httpd
+      state: started
+  
+  - name: ensure apache is enabled
+    service:
+      name: httpd
+      enabled: yes
+...

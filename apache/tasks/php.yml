@@ -1,0 +1,20 @@
+---
+  - name: ensure php is installed
+    package:
+      name: php
+      state: present
+    notify: 
+    - Restart Apache
+
+  - name: ensure php code update
+    copy:
+      src: date.php
+      dest: /var/www/html/date.php
+    notify:
+    - Restart Apache
+
+  - name: ensure dynamic values update by using jinja template
+    template: 
+      src: info.j2
+      dest: /var/www/html/info.html
+...

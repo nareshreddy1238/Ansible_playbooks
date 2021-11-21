@@ -1,0 +1,8 @@
+---
+# tasks file for apache
+- import_tasks: install.yml
+- import_tasks: configuration.yml
+- import_tasks: version-control.yml
+- import_tasks: change-port.yml
+- import_tasks: php.yml
+...
