@@ -1,0 +1,17 @@
+---
+- name: Build Server Config
+  hosts: web
+  gather_facts: true
+  become: yes
+   
+  tasks:
+    - name: Installing java
+      yum:
+        name: java-1.8.0*
+        state: present
+
+    - name: Install maven
+      package: 
+        name: maven
+        state: present
+...   
