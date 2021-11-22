@@ -4,9 +4,9 @@
   gather_facts: true
   become: yes
   vars:
-    tomcat_port: 8080
+    tomcat_port: 8090
     user: tomcat
-    passwd: $1$3OrOekUj$D6qtRBn7yWKWFcLPxjlQv0 
+    passwd: tomcat
   
   tasks:
     - name: Update yum repos
@@ -40,10 +40,7 @@
         src: server.xml.j2
         dest: /home/centos/apache-tomcat-7.0.94/conf/server.xml
 
-    - name: Shutdown Tomcat
-      shell: /home/centos/apache-tomcat-7.0.94/bin/shutdown.sh
-
     - name: Re-Starting Tomcat
-      shell: /home/centos/apache-tomcat-7.0.94/bin/startup.sh
+      shell: nohup /home/centos/apache-tomcat-7.0.94/bin/startup.sh &
 
 ...   
