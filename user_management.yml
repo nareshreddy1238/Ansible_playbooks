@@ -1,0 +1,19 @@
+---
+- name: user management using ansible
+  hosts: web
+  become: yes
+
+  tasks:
+  - name: Create group
+    group:
+      name: HCL
+      state: present
+
+  - name: create user with password
+    user:
+      name: nani
+      password: GzW6Nc6M4hIPs
+      groups: wheel,HCL
+      shell: /bin/bash
+      append: yes
+...

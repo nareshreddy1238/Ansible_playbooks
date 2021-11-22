@@ -1,0 +1,49 @@
+---
+- name: Tomcat Server Config
+  hosts: web
+  gather_facts: true
+  become: yes
+  vars:
+    tomcat_port: 8080
+    user: tomcat
+    passwd: $1$3OrOekUj$D6qtRBn7yWKWFcLPxjlQv0 
+  
+  tasks:
+    - name: Update yum repos
+      yum: 
+        name: "*"
+        state: latest
+
+    - name: Installing java
+      yum:
+        name: java-1.8.0*
+        state: present
+    
+    - name: Download Tomcat Package
+      get_url:
+        url: https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.94/bin/apache-tomcat-7.0.94.tar.gz
+        dest: /home/centos
+
+    - name: Extract Tomcat Package
+      unarchive:
+        src: /home/centos/apache-tomcat-7.0.94.tar.gz
+        dest: /home/centos
+        remote_src: yes 
+ 
+    - name: Tomcat Credentials update
+      template:
+        src: tomcat-users.xml.j2
+        dest: /home/centos/apache-tomcat-7.0.94/conf/tomcat-users.xml
+
+    - name: Tomcat Port update
+      template:
+        src: server.xml.j2
+        dest: /home/centos/apache-tomcat-7.0.94/conf/server.xml
+
+    - name: Shutdown Tomcat
+      shell: /home/centos/apache-tomcat-7.0.94/bin/shutdown.sh
+
+    - name: Re-Starting Tomcat
+      shell: /home/centos/apache-tomcat-7.0.94/bin/startup.sh
+
+...   
